@@ -12,11 +12,14 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
     val allWords: LiveData<List<Item>>
 
     init {
-        val locationsDAO = ItemRoomDatabase.getDatabase(application).locationDAO()
+        val locationsDAO = ItemRoomDatabase.getDatabase(application, viewModelScope).locationDAO()
         repository = ItemRepository(locationsDAO)
         allWords = repository.allWords
     }
     fun insert(item: Item) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(item)
+    }
+    fun check(): Int {
+        return allWords.value!!.size
     }
 }

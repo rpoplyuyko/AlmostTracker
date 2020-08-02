@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -23,6 +26,8 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var itemViewModel: ItemViewModel
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +37,12 @@ class MainActivity : AppCompatActivity() {
         val adapter = ItemListAdapter(this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        itemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+        itemViewModel.allWords.observe(this, Observer { items ->
+            // Update the cached copy of the words in the adapter.
+            items?.let { adapter.setItems(it) }
+        })
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startUpdatingLocation()
@@ -60,7 +71,9 @@ class MainActivity : AppCompatActivity() {
     private suspend fun getLastKnownLocation() {
         try {
             val lastLocation = fusedLocationClient.awaitLastLocation()
-            showLocation(R.id.textView, lastLocation)
+            showLocation(R.id.textView, count, itemViewModel, lastLocation)
+            count++
+            findAndSetText(R.id.textView, (recyclerView.layoutManager!!.itemCount + 1).toString())
         } catch (e: Exception) {
             findAndSetText(R.id.textView, "Unable to get location.")
             Log.d(TAG, "Unable to get location", e)
@@ -76,7 +89,8 @@ class MainActivity : AppCompatActivity() {
             }
             .asLiveData()
             .observe(this, Observer { location ->
-                showLocation(R.id.textView, location)
+                showLocation(R.id.textView, count, itemViewModel, location)
+                count++
                 Log.d(TAG, location.toString())
             })
     }

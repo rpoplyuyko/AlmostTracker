@@ -13,16 +13,16 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 fun createLocationRequest() = LocationRequest.create().apply {
-    interval = 3000
+    interval = 5000
     fastestInterval = 2000
     priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 }
 
-fun Location.asString(format: Int = Location.FORMAT_DEGREES): String {
-    val latitude = Location.convert(latitude, format)
-    val longitude = Location.convert(longitude, format)
-    return "Location is: $latitude, $longitude"
-}
+//fun Location.asCard(format: Int = Location.FORMAT_DEGREES): String {
+//    val latitude = Location.convert(latitude, format)
+//    val longitude = Location.convert(longitude, format)
+//    return "Location is: $latitude, $longitude"
+//}
 
 suspend fun FusedLocationProviderClient.awaitLastLocation(): Location =
     suspendCancellableCoroutine { continuation ->
