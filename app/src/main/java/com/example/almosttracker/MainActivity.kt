@@ -27,7 +27,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var itemViewModel: ItemViewModel
-    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,9 +70,7 @@ class MainActivity : AppCompatActivity() {
     private suspend fun getLastKnownLocation() {
         try {
             val lastLocation = fusedLocationClient.awaitLastLocation()
-            showLocation(R.id.textView, count, itemViewModel, lastLocation)
-            count++
-            findAndSetText(R.id.textView, (recyclerView.layoutManager!!.itemCount + 1).toString())
+            showLocation(R.id.textView, false, itemViewModel, lastLocation)
         } catch (e: Exception) {
             findAndSetText(R.id.textView, "Unable to get location.")
             Log.d(TAG, "Unable to get location", e)
@@ -89,8 +86,7 @@ class MainActivity : AppCompatActivity() {
             }
             .asLiveData()
             .observe(this, Observer { location ->
-                showLocation(R.id.textView, count, itemViewModel, location)
-                count++
+                showLocation(R.id.textView, true, itemViewModel, location)
                 Log.d(TAG, location.toString())
             })
     }

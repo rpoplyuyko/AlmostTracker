@@ -19,7 +19,4 @@ class ItemViewModel(application: Application) : AndroidViewModel(application) {
     fun insert(item: Item) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(item)
     }
-    fun check(): Int {
-        return allWords.value!!.size
-    }
 }
