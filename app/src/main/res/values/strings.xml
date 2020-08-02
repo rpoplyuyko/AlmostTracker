@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Almost Tracker</string>
+    <string name="btn_gps">Show setting location</string>
+
+    <string name="text_address">Address:</string>
+    <string name="text_lat">Latitude:</string>
+    <string name="text_lon">Longtitude:</string>
+    <string name="text_date">Date/Time:</string>
+    <string name="text_none">none</string>
+
 </resources>
