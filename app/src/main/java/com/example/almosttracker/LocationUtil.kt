@@ -13,8 +13,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 fun createLocationRequest() = LocationRequest.create().apply {
-    interval = 10000
-    fastestInterval = 9000
+    interval = 60000
+    fastestInterval = 59000
     priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 }
 
