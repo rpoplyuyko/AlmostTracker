@@ -3,11 +3,12 @@ package com.example.almosttracker
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.icu.text.SimpleDateFormat
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
 fun Activity.findAndSetText(@IdRes id: Int, text: String) {
@@ -17,20 +18,31 @@ fun Activity.findAndSetText(@IdRes id: Int, text: String) {
 fun Activity.showLocation(@IdRes id: Int, flag: Boolean, itemViewModel: ItemViewModel, location: Location?) {
     if (flag) {
         if (location != null) {
-            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-            val currentDate = sdf.format(Date())
-
             val item = Item(
-                "address",
+                getAddress(location),
                 Location.convert(location.latitude, Location.FORMAT_MINUTES).toString(),
                 Location.convert(location.longitude, Location.FORMAT_MINUTES).toString(),
-                currentDate
+                getDateStr()
             )
             itemViewModel.insert(item)
         } else {
             findAndSetText(id, "Location unknown")
         }
     }
+}
+
+fun Activity.getAddress(location: Location) : String {
+    val geocoder = Geocoder(this, Locale.getDefault())
+    val addresses: List<Address> = geocoder?.getFromLocation(location.latitude.toDouble(), location.longitude.toDouble(), 1) as List<Address>
+
+    val address = addresses.get(0).getAddressLine(0)
+
+    return "$address"
+}
+
+fun Activity.getDateStr() : String {
+    val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+    return sdf.format(Date())
 }
 
 fun Activity.hasPermission(permission: String): Boolean {
