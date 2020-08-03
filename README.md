@@ -7,3 +7,5 @@ A parody of a good GPS tracker
 - API livel 24
 
 ##  Problems
+- Synchronizing a database connection
+- Removing invalid database rows
